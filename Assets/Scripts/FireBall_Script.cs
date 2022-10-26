@@ -24,15 +24,19 @@ public class FireBall_Script : MonoBehaviour
 
     void Start()
     {
+        //seta o atk do player false para evitar erros
         Player_Script.atk = false;
+
+        //checa se o valor de gravidade dado é positivo , se for ja converte ele para negativo
         if (gravidade > 0)
         {
             gravidade *= -1;
         }
 
         //Physics.gravity = new Vector3(0, gravidade, 0);
-        rb.Sleep();
 
+        //para qualquer força que esteja sendo feita sobre a bola de fogo e adiciona uma forca vertical
+        rb.Sleep();
         rb.AddForce(transform.up * force, ForceMode.Impulse);
     }
 
@@ -42,17 +46,18 @@ public class FireBall_Script : MonoBehaviour
     void Update()
     {
 
-       
+        Hit();
     }
 
     private void FixedUpdate()
     {
-        Hit();
+       // Hit();
     }
 
 
     private void OnTriggerEnter(Collider other)
     {
+
         if(other.gameObject.tag == "DestroyFireball")
         {
             DestroyBall(0);
@@ -82,6 +87,7 @@ public class FireBall_Script : MonoBehaviour
     }
 
 
+    //destroi a bola e indica oara o volcao que pode spawnar outra 
     void DestroyBall(float time)
     {
         Volcano_Script.canSpawn = true;
@@ -91,25 +97,20 @@ public class FireBall_Script : MonoBehaviour
 
     void Hit()
     {
-        if (Player_Script.atk)
-        {
-            StartCoroutine(moving());
-        }
+            // se o player tiver atacando , para qualquer forca que esteja sobre a bola e adiciona uma forca que aumenta conforme 
+            //o player carrega o seu ataque
+            if (Player_Script.atk)
+            {
+                rb.Sleep();
+
+                rb.AddForce(new Vector3(0, 0, 1) * atkPower * 10, ForceMode.Impulse);
+
+                //yield return new WaitForSeconds(0.2f);
+                //StartCoroutine(moving());
+            }
+        
     }
 
-    IEnumerator moving()
-    {
-        if (hit)
-        {
-            // StartCoroutine(slowTime());
-            rb.Sleep();
-
-            rb.AddForce(new Vector3(0, 0, 1) * atkPower * 10, ForceMode.Impulse);
-
-            yield return new WaitForSeconds(0.2f);
-            //Player_Script.atk = false;
-            
-        }
-    }
+    
 
 }
