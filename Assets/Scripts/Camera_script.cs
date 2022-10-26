@@ -11,6 +11,12 @@ public class Camera_script : MonoBehaviour
 
     public bool testShake;
 
+    [Space]
+    [Space]
+
+    public Transform playerTransform;
+    public float speed;
+    public Vector3 cameraOffset;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,6 +26,7 @@ public class Camera_script : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        FollowPlayer();
         if (testShake)
         {
             StartCoroutine(ScreenShake());
@@ -31,9 +38,18 @@ public class Camera_script : MonoBehaviour
         {
             shakeCamera = false;
             StartCoroutine(ScreenShake());
-            
         }
     }
+
+
+    void FollowPlayer()
+    {
+        transform.position = Vector3.Lerp(transform.position, playerTransform.position - cameraOffset, speed * Time.deltaTime);
+    }
+
+
+   
+
 
     IEnumerator ScreenShake()
     {

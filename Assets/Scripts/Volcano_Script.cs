@@ -19,7 +19,7 @@ public class Volcano_Script : MonoBehaviour
     void Start()
     {
         //indica no inicio que pode começar a spawnar 
-        canSpawn = true;
+        //canSpawn = true;
         
     }
 
@@ -30,6 +30,7 @@ public class Volcano_Script : MonoBehaviour
         //spawn atraves de um botao, função para testes
         if (spawn)
         {
+            
             StartCoroutine(LaunchFireball());
             spawn = false;
         }
@@ -37,6 +38,7 @@ public class Volcano_Script : MonoBehaviour
         //Spawna caso o indicador seja true
         if (canSpawn)
         {
+            
             StartCoroutine(LaunchFireball());
             canSpawn = false;
         }
@@ -48,7 +50,7 @@ public class Volcano_Script : MonoBehaviour
     {
         //aguarda o tempo setado e spawna a bola de fogo na posição do spawnFireball
         yield return new WaitForSeconds(timeToRespawn);
-  
+        
             Instantiate(fireballPrefab, spawnFireball.transform.position, spawnFireball.transform.rotation);
    
         //StartCoroutine(LaunchFireball());
