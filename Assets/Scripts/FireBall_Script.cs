@@ -69,7 +69,7 @@ public class FireBall_Script : MonoBehaviour
             QuebrarParede_Script.breakPower = atkPower;
             QuebrarParede_Script.quebrar = true;
 
-
+            Camera_script.shakeCamera = true;
 
             DestroyBall(0);
 
