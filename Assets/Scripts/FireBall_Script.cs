@@ -65,8 +65,11 @@ public class FireBall_Script : MonoBehaviour
 
         if(other.gameObject.tag == "BreakWall")
         {
+            
             QuebrarParede_Script.breakPower = atkPower;
             QuebrarParede_Script.quebrar = true;
+
+
 
             DestroyBall(0);
 
@@ -112,7 +115,7 @@ public class FireBall_Script : MonoBehaviour
             {
                 rb.Sleep();
 
-                rb.AddForce(new Vector3(0, 0, 1) * atkPower * 10, ForceMode.Impulse);
+                rb.AddForce(new Vector3(0, 0, 1) * atkPower * 7, ForceMode.Impulse);
 
                 //yield return new WaitForSeconds(0.2f);
                 //StartCoroutine(moving());

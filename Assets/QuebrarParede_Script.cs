@@ -6,6 +6,9 @@ public class QuebrarParede_Script : MonoBehaviour
 {
     public Transform fragmentsWall;
     public GameObject normalWall;
+    public GameObject explosionParticle;
+    public Collider colisao;
+
 
     public static bool quebrar;
     public static float breakPower;
@@ -15,7 +18,7 @@ public class QuebrarParede_Script : MonoBehaviour
     public float explosionRadios;
     public bool teste;
 
-
+    
 
     // Start is called before the first frame update
     void Start()
@@ -35,12 +38,12 @@ public class QuebrarParede_Script : MonoBehaviour
         */
         if (quebrar)
         {
-            if (breakPower >= 3 && breakPower < 6)
+            if (breakPower <= 6)
             {
                 explosionForce = 500;
                 normalWall.SetActive(false);
                 Transform transformFragments = Instantiate(fragmentsWall, normalWall.transform.position, normalWall.transform.rotation);
-
+                Instantiate(explosionParticle, normalWall.transform.position, normalWall.transform.rotation);
                 foreach (Transform child in transformFragments)
                 {
                     if (child.TryGetComponent<Rigidbody>(out Rigidbody childRigidbody))
@@ -48,14 +51,17 @@ public class QuebrarParede_Script : MonoBehaviour
                         childRigidbody.AddExplosionForce(explosionForce, normalWall.transform.position, explosionRadios);
                     }
                 }
+
+                colisao.enabled = false;
+
                 quebrar = false;
             }
-            else if(breakPower >=6 && breakPower < 8)
+            else if(breakPower > 6 && breakPower <= 8)
             {
                 explosionForce = 1000;
                 normalWall.SetActive(false);
                 Transform transformFragments = Instantiate(fragmentsWall, normalWall.transform.position, normalWall.transform.rotation);
-
+                Instantiate(explosionParticle, normalWall.transform.position, normalWall.transform.rotation);
                 foreach (Transform child in transformFragments)
                 {
                     if (child.TryGetComponent<Rigidbody>(out Rigidbody childRigidbody))
@@ -63,14 +69,17 @@ public class QuebrarParede_Script : MonoBehaviour
                         childRigidbody.AddExplosionForce(explosionForce, normalWall.transform.position, explosionRadios);
                     }
                 }
+
+                colisao.enabled = false;
+
                 quebrar = false;
             }
-            else if (breakPower >= 8 && breakPower <= 10)
+            else if (breakPower > 8)
             {
                 explosionForce = 2000;
                 normalWall.SetActive(false);
                 Transform transformFragments = Instantiate(fragmentsWall, normalWall.transform.position, normalWall.transform.rotation);
-
+                Instantiate(explosionParticle, normalWall.transform.position, normalWall.transform.rotation);
                 foreach (Transform child in transformFragments)
                 {
                     if (child.TryGetComponent<Rigidbody>(out Rigidbody childRigidbody))
@@ -78,6 +87,9 @@ public class QuebrarParede_Script : MonoBehaviour
                         childRigidbody.AddExplosionForce(explosionForce, normalWall.transform.position, explosionRadios);
                     }
                 }
+
+                colisao.enabled = false;
+
                 quebrar = false;
             }
             else
