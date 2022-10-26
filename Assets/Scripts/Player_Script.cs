@@ -6,16 +6,22 @@ using UnityEngine.UI;
 public class Player_Script : MonoBehaviour
 {
     public static bool atk;
+    public bool usarSpace;
+    
+    
     public float power;
-    public Slider powerUi;
+    public GameObject powerUi;
+    public Animator powerUiAnim;
+    
     bool charging;
-   
+    bool usingPowerBar;
 
 
     // Start is called before the first frame update
     void Start()
     {
         power = 0;
+        
     }
 
     // Update is called once per frame
@@ -23,7 +29,16 @@ public class Player_Script : MonoBehaviour
     {
         print("atk: " + atk);
         print("hit: " + FireBall_Script.hit);
-        PlayerInput();
+
+        if (usarSpace)
+        {
+            PlayerInput(KeyCode.Space);
+        }
+        else
+        {
+            PlayerInput(KeyCode.Mouse0);
+        }
+        
 
     }
 
@@ -43,7 +58,7 @@ public class Player_Script : MonoBehaviour
     }
 
 
-    void PlayerInput()
+    void PlayerInput(KeyCode tecla)
     {
         //quando o jogador clikar e segurar = começa a carregar
         //ao soltar o mouse indica para a bola a força de arremeço e que ela pode ser lançada
@@ -51,13 +66,12 @@ public class Player_Script : MonoBehaviour
 
 
 
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKey(tecla))
         {
             charging = true;
-
-
+            usingPowerBar = true;
         }
-        else if (Input.GetKeyUp(KeyCode.Space))
+        else if (Input.GetKeyUp(tecla))
         {
             charging = false;
            
@@ -71,10 +85,10 @@ public class Player_Script : MonoBehaviour
         else 
         {
             power = 0;
-            
+            usingPowerBar = false;
         }
 
-        atk = Input.GetKeyUp(KeyCode.Space);
+        atk = Input.GetKeyUp(tecla);
 
 
 
@@ -82,19 +96,22 @@ public class Player_Script : MonoBehaviour
     }
 
     void UpdateUI() 
-    { 
-        //atualiza a ui
-        powerUi.value = power;
-    }
-
-    IEnumerator a()
     {
-        yield return new WaitForSeconds(1f);
-        power = 0;
-
-        if (atk && !FireBall_Script.hit)
+        //atualiza a ui
+        if (usingPowerBar)
         {
-            atk = false;
+            powerUiAnim.SetBool("Aparecer", true);
+            powerUiAnim.SetTrigger("Comecar");
         }
+        else if(!usingPowerBar)
+        {
+            powerUiAnim.SetBool("Aparecer", false);
+        }
+        powerUi.GetComponent<Slider>().value = power;
     }
+
+    
+
+
+    
 }
