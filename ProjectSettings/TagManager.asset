@@ -6,6 +6,7 @@ TagManager:
   tags:
   - DestroyFireball
   - PlayerLocalHit
+  - BreakWall
   layers:
   - Default
   - TransparentFX

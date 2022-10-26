@@ -62,6 +62,15 @@ public class FireBall_Script : MonoBehaviour
         {
             DestroyBall(0);
         }
+
+        if(other.gameObject.tag == "BreakWall")
+        {
+            QuebrarParede_Script.breakPower = atkPower;
+            QuebrarParede_Script.quebrar = true;
+
+            DestroyBall(0);
+
+        }
     }
 
 
