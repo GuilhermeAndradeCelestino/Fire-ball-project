@@ -9,6 +9,7 @@ TagManager:
   - BreakWall
   - GenerateNewGround
   - DestroyLastTerrain
+  - DamageWall
   layers:
   - Default
   - TransparentFX

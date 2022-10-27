@@ -127,3 +127,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   force: 5
   gravidade: 40
+  maxSize: 10
+  sizeIncreaseSpeed: 0.1

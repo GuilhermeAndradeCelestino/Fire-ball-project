@@ -18,10 +18,12 @@ public class QuebrarParede_Script : MonoBehaviour
     public float explosionRadios;
     public bool teste;
 
+   
+
     private void Awake()
     {
         quebrar = false;
-
+        
     }
 
     // Start is called before the first frame update
@@ -40,6 +42,18 @@ public class QuebrarParede_Script : MonoBehaviour
             teste = false;
         }
         */
+        QuebrarParede();
+    }
+
+    
+    IEnumerator destroyWall()
+    {
+        yield return new WaitForSeconds(3);
+        Destroy(gameObject);
+    }
+
+    void QuebrarParede()
+    {
         if (quebrar)
         {
             if (breakPower <= 6)
@@ -57,10 +71,10 @@ public class QuebrarParede_Script : MonoBehaviour
                 }
 
                 colisao.enabled = false;
-
+                StartCoroutine(destroyWall());
                 quebrar = false;
             }
-            else if(breakPower > 6 && breakPower <= 8)
+            else if (breakPower > 6 && breakPower <= 8)
             {
                 explosionForce = 1000;
                 normalWall.SetActive(false);
@@ -75,7 +89,7 @@ public class QuebrarParede_Script : MonoBehaviour
                 }
 
                 colisao.enabled = false;
-
+                StartCoroutine(destroyWall());
                 quebrar = false;
             }
             else if (breakPower > 8)
@@ -93,14 +107,14 @@ public class QuebrarParede_Script : MonoBehaviour
                 }
 
                 colisao.enabled = false;
-
+                StartCoroutine(destroyWall());
                 quebrar = false;
             }
             else
             {
-                quebrar=false;
+                quebrar = false;
             }
-            
+
         }
     }
 }

@@ -15,13 +15,22 @@ public class FireBall_Script : MonoBehaviour
 
     bool dontDestroy;
 
+    public static bool onAnimation;
 
+    //tamanho
+    bool increaseSize;
+    float tamanhoAumentado;
+    public float maxSize;
+    public float sizeIncreaseSpeed;
 
     // Start is called before the first frame update
     public void Awake()
     {
+        tamanhoAumentado = 1;
+        increaseSize = false;
         rb = GetComponent<Rigidbody>();
         dontDestroy = false;
+       // onAnimation = false;
     }
 
     void Start()
@@ -32,6 +41,9 @@ public class FireBall_Script : MonoBehaviour
             gravidade *= -1;
         }
 
+        
+        
+
         //Physics.gravity = new Vector3(0, gravidade, 0);
         StartCoroutine(LaunchBall());
     }
@@ -41,12 +53,20 @@ public class FireBall_Script : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-      
+        
     }
 
     private void FixedUpdate()
     {
-       
+        if (increaseSize)
+        {
+            
+            if(tamanhoAumentado < 3)
+            {
+                tamanhoAumentado += 0.1f;
+            }
+            transform.localScale = new Vector3(tamanhoAumentado, tamanhoAumentado, tamanhoAumentado);
+        }
     }
 
 
@@ -58,6 +78,9 @@ public class FireBall_Script : MonoBehaviour
             if (!dontDestroy)
             {
                 Player_Script.atirando = false;
+                Player_Script.overCharge = false;
+                Player_Script.oneTimeChanging = true;
+                onAnimation = false;
                 Destroy(gameObject);
             }
             
@@ -65,10 +88,12 @@ public class FireBall_Script : MonoBehaviour
 
         if(other.gameObject.tag == "BreakWall")
         {
+            other.gameObject.GetComponent<QuebrarParede_Script>().enabled = true;
             dontDestroy = true;
             QuebrarParede_Script.breakPower = atkPower;
             QuebrarParede_Script.quebrar = true;
             Camera_script.shakeCamera = true;
+            onAnimation = false;
             StartCoroutine(DestroyBall());
         }
     }
@@ -80,6 +105,8 @@ public class FireBall_Script : MonoBehaviour
     {
         yield return new WaitForSeconds(1.5f);
         Player_Script.atirando = false;
+        Player_Script.overCharge = false;
+        Player_Script.oneTimeChanging = true;
         dontDestroy = false;
         Destroy(gameObject);
     }
@@ -87,6 +114,14 @@ public class FireBall_Script : MonoBehaviour
     //Lança a bola para cima e depois aplai uma forçã horizontal baseado no quanto o jogador carregou de poder
     IEnumerator LaunchBall()
     {
+        onAnimation = true;
+        if(atkPower >= 10)
+        {
+            GetComponent<Renderer>().material.SetColor("_Color", Color.red);
+        }
+
+
+
         Player_Script.isInCooldown = true;
         rb.Sleep();
         rb.AddForce(transform.up * force, ForceMode.Impulse);
@@ -94,8 +129,20 @@ public class FireBall_Script : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         print(atkPower);
         rb.Sleep();
-        rb.AddForce(new Vector3(0, 0, 1) * atkPower * 7, ForceMode.Impulse);
+        if (atkPower >= 10)
+        {
+            increaseSize = true;
+            rb.AddForce(new Vector3(0, 0, 1) * atkPower * 10, ForceMode.Impulse);
+        }
+        else
+        {
+            rb.AddForce(new Vector3(0, 0, 1) * atkPower * 7, ForceMode.Impulse);
+        }
+        
+
     }
+
+
 
 
     

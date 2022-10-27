@@ -9,6 +9,15 @@ public class Terrain_Script : MonoBehaviour
     GameObject lastTerrain;
     int limitador = 1;
 
+    [Space]
+    [Space]
+
+    public GameObject paredePrefab;
+    //1- , 2- , 3-
+    public static int dificult;
+
+
+
     // Start is called before the first frame update
     void Start()
     {

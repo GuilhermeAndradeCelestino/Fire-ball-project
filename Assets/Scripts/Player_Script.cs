@@ -21,9 +21,15 @@ public class Player_Script : MonoBehaviour
     public float power;
     public GameObject powerUi;
     public Animator powerUiAnim;
+    public static bool overCharge;
+    bool oneTimeOverChange;
+    bool charging;
+    bool usingPowerBar;
+    public static bool oneTimeChanging;
 
     //Barra de poder Cooldown
     public Image cooldownUi;
+    public Image cooldownUiPronto;
     float cooldownValue;
     public static bool isInCooldown;
     bool oneTimeCooldown;
@@ -36,11 +42,6 @@ public class Player_Script : MonoBehaviour
     float multiplicador;
     
 
-    //Limitadores
-    bool charging;
-    bool usingPowerBar;
-    
-
     //Vidas
     public Image[] hudsLife;
     int life;
@@ -51,6 +52,13 @@ public class Player_Script : MonoBehaviour
     float pontos;
     public TextMeshProUGUI pontosText;
 
+    [Space]
+    [Space]
+    //Invunerabilidade
+    public GameObject playerModel;
+    bool isInvisible;
+
+
 
     private void Awake()
     {
@@ -58,10 +66,12 @@ public class Player_Script : MonoBehaviour
         life = hudsLife.Length - 1;
         posicaoInicial = transform.position;
         oneTimeCooldown = true;
+        oneTimeOverChange = true;
+        oneTimeChanging = true;
         cooldownValue = 1;
+        overCharge = false;
+        isInvisible = false;
     }
-
-
 
     // Start is called before the first frame update
     void Start()
@@ -109,22 +119,33 @@ public class Player_Script : MonoBehaviour
         
         if (charging)
         {
-            if (power <= 10)
+            if (power <= 11)
             {
                 power += 0.1f;
 
             }
+            else if( power >= 11)
+            {
+                overCharge = true;
+                oneTimeOverChange=true;
+            }
+           
         }
     }
 
 
-    private void OnCollisionEnter(Collision collision)
+    
+
+    private void OnTriggerEnter(Collider other)
     {
-        if(collision.gameObject.tag == "BreakWall")
+        if (other.gameObject.tag == "DamageWall" && !isInvisible)
         {
             levouDano = true;
+            StartCoroutine(Ivencibilidade(3, 0.3f));
+            isInvisible = true;
         }
     }
+
 
     void CooldownAtk()
     {
@@ -166,31 +187,58 @@ public class Player_Script : MonoBehaviour
         //quando o jogador clikar e segurar = começa a carregar
         //ao soltar o mouse indica para a bola a força de arremeço e que ela pode ser lançada
         //depois disso zera o poder
+
+        //OverChange é uma mecanica que faz com que a bola seja lançada a força caso o jogador carregue ao maximo a barra
+        //porem essa bola não vai ter força nenhuma, se o jogador queiser atingir a força maxima ele precisa carregar
+        //e soltar no momento certo
+
         if (!isInCooldown)
         {
-            if (Input.GetKey(tecla))
+            if (!overCharge)
             {
-                atirando = true;
-                charging = true;
-                usingPowerBar = true;
+                if (Input.GetKey(tecla) && !FireBall_Script.onAnimation && oneTimeChanging)
+                {
+                    atirando = true;
+                    charging = true;
+                    usingPowerBar = true;
+                    
+                }
+                else if (Input.GetKeyUp(tecla) && !FireBall_Script.onAnimation)
+                {
+                    if(oneTimeChanging == true)
+                    {
+                        charging = false;
+                        if (power > 10 && power < 11)
+                        {
+                            FireBall_Script.atkPower = 10;
+                        }
+                        else
+                        {
+                            FireBall_Script.atkPower = power;
+                        }
+                        print("Ataquei");
+                        Volcano_Script.canSpawn = true;
+                        oneTimeChanging = false;
+                    }
+                }
+                else
+                {
+                    power = 0;
+                    usingPowerBar = false;
+                    
+                }
             }
-            else if (Input.GetKeyUp(tecla))
+            else if (overCharge && oneTimeOverChange)
             {
                 charging = false;
-                FireBall_Script.atkPower = power;
-                print("Ataquei");
-                Volcano_Script.canSpawn = true;
-            }
-            else
-            {
                 power = 0;
                 usingPowerBar = false;
+                FireBall_Script.atkPower = 0.1f;
+                print("Ataquei com overchange");
+                Volcano_Script.canSpawn = true;
+                oneTimeOverChange = false;
             }
-
         }
-
-
-
     }
 
     void Movimentacao()
@@ -208,8 +256,6 @@ public class Player_Script : MonoBehaviour
         pontos = Vector3.Distance(posicaoInicial, transform.position);
         Mathf.Abs(pontos);
     }
-
-
 
     void UpdateUI()
     {
@@ -239,10 +285,31 @@ public class Player_Script : MonoBehaviour
 
         //Atualiza a ui do cooldown
         cooldownUi.fillAmount = cooldownValue;
+        if(!isInCooldown)
+        {
+            cooldownUiPronto.enabled = true;
+        }
+        else if(isInCooldown)
+        {
+            cooldownUiPronto.enabled = false;
+        }
     }
 
 
-
+ 
+    //Animação de invunerabilidade temporaria ao tomar dano, numeroPiscadas define quantas vezes o modelo do player vai desaparecer e
+    //reaparecer. duracaoPiscada define o tempo que o modelo vai ficar desligado
+    IEnumerator Ivencibilidade(int numeroPiscadas, float duracaoPiscada)
+    {        
+        for(int i = 1; i < numeroPiscadas+1; i++)
+        {
+            yield return new WaitForSeconds(duracaoPiscada);
+            playerModel.SetActive(false);
+            yield return new WaitForSeconds(duracaoPiscada);
+            playerModel.SetActive(true);
+        }
+        isInvisible = false;
+    }
 
 }
 
