@@ -44,7 +44,7 @@ public class Buttons_Script : MonoBehaviour
     {
         Time.timeScale = 1;
         Player_Script.idHudAtual = 0;
-        SceneManager.LoadScene(sceneID);
+        SceneManager.LoadScene(sceneID , LoadSceneMode.Single);
     }
 
     public void SairPausaButton()

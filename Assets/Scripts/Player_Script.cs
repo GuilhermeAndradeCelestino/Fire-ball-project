@@ -64,6 +64,7 @@ public class Player_Script : MonoBehaviour
     bool isPaused;
     //0 - gameplay /1 - pausa /2- derrota
     public static int idHudAtual;
+    public TextMeshProUGUI pontosDerrotaText;
 
     //Dificuldade
     /* 0 = sem nada  para modificar / 1 = multiplicador velocidade aumenta para em 0.2 e usa terreno 70 / 
@@ -89,10 +90,12 @@ public class Player_Script : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Derrota();
+
         Pause();
         print(multiplicador + " multi");
         Pontuacao();
-
+        
         CooldownAtk();
         
         AumentarDificuldade();
@@ -166,8 +169,9 @@ public class Player_Script : MonoBehaviour
 
     void inicializar()
     {
-        rb = GetComponent<Rigidbody>();
+        StartCoroutine(despausar());
         life = hudsLife.Length - 1;
+        rb = GetComponent<Rigidbody>();
         posicaoInicial = transform.position;
         oneTimeCooldown = true;
         oneTimeOverChange = true;
@@ -175,6 +179,7 @@ public class Player_Script : MonoBehaviour
         cooldownValue = 1;
         overCharge = false;
         isInvisible = false;
+        idHudAtual = 0;
         StopAllCoroutines();
     }
     void CooldownAtk()
@@ -378,6 +383,18 @@ public class Player_Script : MonoBehaviour
         }
     }
  
+    void Derrota()
+    {
+        if (life == -1)
+        {
+            float pontostexto = Mathf.Round(pontos);
+            isPaused = true;
+            pontosDerrotaText.text = pontostexto.ToString();
+            idHudAtual = 2;
+        }
+    }
+
+
     //Animação de invunerabilidade temporaria ao tomar dano, numeroPiscadas define quantas vezes o modelo do player vai desaparecer e
     //reaparecer. duracaoPiscada define o tempo que o modelo vai ficar desligado
     IEnumerator Ivencibilidade(int numeroPiscadas, float duracaoPiscada)
