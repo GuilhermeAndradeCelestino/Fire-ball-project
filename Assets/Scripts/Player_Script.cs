@@ -33,6 +33,7 @@ public class Player_Script : MonoBehaviour
     float cooldownValue;
     public static bool isInCooldown;
     bool oneTimeCooldown;
+    
 
     [Space]
     [Space]
@@ -58,10 +59,17 @@ public class Player_Script : MonoBehaviour
     public GameObject playerModel;
     bool isInvisible;
 
+    //Dificuldade
+    /* 0 = sem nada  para modificar / 1 = multiplicador velocidade aumenta para em 0.2 e usa terreno 70 / 
+     * 2 = multiplicador velocidade aumenta em 0.3/ 3 = 1 - multiplicador velocidade aumenta para em 0.5
+     * 4 = usa terreno 50 / 5 = usa terreno 50; */
+
+    public static int dificult = 0;
 
 
     private void Awake()
     {
+
         rb = GetComponent<Rigidbody>();
         life = hudsLife.Length - 1;
         posicaoInicial = transform.position;
@@ -71,6 +79,7 @@ public class Player_Script : MonoBehaviour
         cooldownValue = 1;
         overCharge = false;
         isInvisible = false;
+        
     }
 
     // Start is called before the first frame update
@@ -83,9 +92,13 @@ public class Player_Script : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        print(multiplicador + " multi");
         Pontuacao();
 
         CooldownAtk();
+        
+        AumentarDificuldade();
+
 
 
         if (usarSpace)
@@ -121,7 +134,7 @@ public class Player_Script : MonoBehaviour
         {
             if (power <= 11)
             {
-                power += 0.1f;
+                power += 0.1f * multiplicador;
 
             }
             else if( power >= 11)
@@ -141,7 +154,7 @@ public class Player_Script : MonoBehaviour
         if (other.gameObject.tag == "DamageWall" && !isInvisible)
         {
             levouDano = true;
-            StartCoroutine(Ivencibilidade(3, 0.3f));
+            StartCoroutine(Ivencibilidade(5, 0.3f));
             isInvisible = true;
         }
     }
@@ -149,7 +162,7 @@ public class Player_Script : MonoBehaviour
 
     void CooldownAtk()
     {
-        //Checa se esta em cooldown aparti da variavel isInCooldown, oneTimeCooldown serve apenas para evitar que o 
+        //Checa se esta em cooldown a parti da variavel isInCooldown, oneTimeCooldown serve apenas para evitar que o 
         //o codigo fique sendo executado mias de uma vez
         if (isInCooldown && oneTimeCooldown)
         {
@@ -157,7 +170,6 @@ public class Player_Script : MonoBehaviour
             StartCoroutine(CooldownValui());
             oneTimeCooldown = false;
         }
-
     }
 
     IEnumerator CooldownValui()
@@ -169,6 +181,8 @@ public class Player_Script : MonoBehaviour
         }
 
         yield return new WaitForSeconds(0.3f);
+        
+
         cooldownValue += 0.1f;
         if (cooldownValue < 1)
         {
@@ -257,6 +271,8 @@ public class Player_Script : MonoBehaviour
         Mathf.Abs(pontos);
     }
 
+    
+
     void UpdateUI()
     {
         //atualiza a ui da barra de poder
@@ -310,6 +326,42 @@ public class Player_Script : MonoBehaviour
         }
         isInvisible = false;
     }
+
+    /* 0 = sem nada  para modificar / 1 = multiplicador velocidade aumenta para em 0.2 e usa terreno 70 / 
+     * 2 = multiplicador velocidade aumenta em 0.3/ 3 = 1 - multiplicador velocidade aumenta para em 0.5
+     * 4 = usa terreno 50 / 5 = multiplicador aumenta em 1 */
+
+    void AumentarDificuldade()
+    {
+        if (pontos > 100 && pontos < 200)
+        {
+            dificult = 1;
+            multiplicador = 1.2f;
+        }
+        else if (pontos > 200 && pontos < 600)
+        {
+            dificult = 2;
+            multiplicador = 1.5f;
+        }
+        else if (pontos > 600 && pontos < 3600)
+        {
+            dificult = 3;
+            multiplicador = 2f;
+        }
+        else if (pontos > 3600 && pontos < 25200)
+        {
+            dificult = 4;
+        }
+        else if (pontos > 25200)
+        {
+            dificult = 5;
+            multiplicador = 3;
+        }
+    }
+
+
+   
+
 
 }
 

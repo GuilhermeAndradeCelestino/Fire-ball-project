@@ -23,6 +23,10 @@ public class FireBall_Script : MonoBehaviour
     public float maxSize;
     public float sizeIncreaseSpeed;
 
+    //limitador
+    bool oneTimeBreak;
+
+
     // Start is called before the first frame update
     public void Awake()
     {
@@ -30,6 +34,7 @@ public class FireBall_Script : MonoBehaviour
         increaseSize = false;
         rb = GetComponent<Rigidbody>();
         dontDestroy = false;
+        oneTimeBreak = true;
        // onAnimation = false;
     }
 
@@ -86,7 +91,7 @@ public class FireBall_Script : MonoBehaviour
             
         }
 
-        if(other.gameObject.tag == "BreakWall")
+        if(other.gameObject.tag == "BreakWall" && oneTimeBreak)
         {
             other.gameObject.GetComponent<QuebrarParede_Script>().enabled = true;
             dontDestroy = true;
@@ -95,6 +100,7 @@ public class FireBall_Script : MonoBehaviour
             Camera_script.shakeCamera = true;
             onAnimation = false;
             StartCoroutine(DestroyBall());
+            oneTimeBreak = false;
         }
     }
 
@@ -118,11 +124,16 @@ public class FireBall_Script : MonoBehaviour
         if(atkPower >= 10)
         {
             GetComponent<Renderer>().material.SetColor("_Color", Color.red);
+            Player_Script.isInCooldown = false;
+        }
+        else
+        {
+            Player_Script.isInCooldown = true;
         }
 
+        
 
-
-        Player_Script.isInCooldown = true;
+        
         rb.Sleep();
         rb.AddForce(transform.up * force, ForceMode.Impulse);
 
