@@ -34,6 +34,7 @@ public class Buttons_Script : MonoBehaviour
         }
         else
         {
+            Time.timeScale = 1;
             SceneManager.LoadScene(sceneID);
         }
     }
@@ -41,12 +42,15 @@ public class Buttons_Script : MonoBehaviour
 
     public void ReniniciarButton(int sceneID)
     {
+        Time.timeScale = 1;
+        Player_Script.idHudAtual = 0;
         SceneManager.LoadScene(sceneID);
     }
 
-    public void SairPausaButton(int sceneID)
+    public void SairPausaButton()
     {
-        SceneManager.LoadScene(sceneID);
+        Time.timeScale = 1;
+        Player_Script.idHudAtual = 0;
     }
 
 

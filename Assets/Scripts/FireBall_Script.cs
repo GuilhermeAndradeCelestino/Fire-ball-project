@@ -30,7 +30,7 @@ public class FireBall_Script : MonoBehaviour
     // Start is called before the first frame update
     public void Awake()
     {
-        tamanhoAumentado = 1;
+        tamanhoAumentado = 3;
         increaseSize = false;
         rb = GetComponent<Rigidbody>();
         dontDestroy = false;
@@ -65,11 +65,6 @@ public class FireBall_Script : MonoBehaviour
     {
         if (increaseSize)
         {
-            
-            if(tamanhoAumentado < 3)
-            {
-                tamanhoAumentado += 0.1f;
-            }
             transform.localScale = new Vector3(tamanhoAumentado, tamanhoAumentado, tamanhoAumentado);
         }
     }

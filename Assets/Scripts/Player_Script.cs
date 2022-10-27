@@ -59,6 +59,12 @@ public class Player_Script : MonoBehaviour
     public GameObject playerModel;
     bool isInvisible;
 
+    //Pausa e derrota
+    public GameObject[] Huds;
+    bool isPaused;
+    //0 - gameplay /1 - pausa /2- derrota
+    public static int idHudAtual;
+
     //Dificuldade
     /* 0 = sem nada  para modificar / 1 = multiplicador velocidade aumenta para em 0.2 e usa terreno 70 / 
      * 2 = multiplicador velocidade aumenta em 0.3/ 3 = 1 - multiplicador velocidade aumenta para em 0.5
@@ -69,22 +75,13 @@ public class Player_Script : MonoBehaviour
 
     private void Awake()
     {
-
-        rb = GetComponent<Rigidbody>();
-        life = hudsLife.Length - 1;
-        posicaoInicial = transform.position;
-        oneTimeCooldown = true;
-        oneTimeOverChange = true;
-        oneTimeChanging = true;
-        cooldownValue = 1;
-        overCharge = false;
-        isInvisible = false;
-        
+        inicializar();
     }
 
     // Start is called before the first frame update
     void Start()
     {
+        inicializar();
         power = 0;
         multiplicador = 1;
     }
@@ -92,6 +89,7 @@ public class Player_Script : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Pause();
         print(multiplicador + " multi");
         Pontuacao();
 
@@ -103,11 +101,18 @@ public class Player_Script : MonoBehaviour
 
         if (usarSpace)
         {
-            PlayerInput(KeyCode.Space);
+            if (!isPaused)
+            {
+                PlayerInput(KeyCode.Space);
+            }
+            
         }
         else
         {
-            PlayerInput(KeyCode.Mouse0);
+            if (!isPaused)
+            {
+                PlayerInput(KeyCode.Mouse0);
+            }
         }
 
         
@@ -159,7 +164,19 @@ public class Player_Script : MonoBehaviour
         }
     }
 
-
+    void inicializar()
+    {
+        rb = GetComponent<Rigidbody>();
+        life = hudsLife.Length - 1;
+        posicaoInicial = transform.position;
+        oneTimeCooldown = true;
+        oneTimeOverChange = true;
+        oneTimeChanging = true;
+        cooldownValue = 1;
+        overCharge = false;
+        isInvisible = false;
+        StopAllCoroutines();
+    }
     void CooldownAtk()
     {
         //Checa se esta em cooldown a parti da variavel isInCooldown, oneTimeCooldown serve apenas para evitar que o 
@@ -271,7 +288,23 @@ public class Player_Script : MonoBehaviour
         Mathf.Abs(pontos);
     }
 
-    
+    void Pause()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if(!atirando && !charging)
+            {
+                isPaused = true;
+                idHudAtual = 1;
+            }
+        }
+    }
+
+    IEnumerator despausar()
+    {
+        yield return new WaitForSeconds(0.2f);
+        isPaused = false;
+    }
 
     void UpdateUI()
     {
@@ -309,9 +342,41 @@ public class Player_Script : MonoBehaviour
         {
             cooldownUiPronto.enabled = false;
         }
+
+        //Troca de menus
+        VisibilidadeHud();
+        if (idHudAtual == 0)
+        {
+            Time.timeScale = 1;
+            if (isPaused)
+            {
+                StartCoroutine(despausar());
+            }
+        }
+        else if (idHudAtual == 1)
+        {
+            Time.timeScale = 0;
+        }
+        else if (idHudAtual == 2)
+        {
+            Time.timeScale = 0;
+        }
     }
 
-
+    void VisibilidadeHud()
+    {
+        for (int i = 0; i < Huds.Length; i++)
+        {
+            if (i == idHudAtual)
+            {
+                Huds[idHudAtual].SetActive(true);
+            }
+            else
+            {
+                Huds[i].SetActive(false);
+            }
+        }
+    }
  
     //Animação de invunerabilidade temporaria ao tomar dano, numeroPiscadas define quantas vezes o modelo do player vai desaparecer e
     //reaparecer. duracaoPiscada define o tempo que o modelo vai ficar desligado
@@ -360,7 +425,7 @@ public class Player_Script : MonoBehaviour
     }
 
 
-   
+    
 
 
 }
