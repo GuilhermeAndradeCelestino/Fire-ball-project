@@ -13,11 +13,15 @@ public class FireBall_Script : MonoBehaviour
     
     public static float atkPower;
 
+    bool dontDestroy;
+
+
 
     // Start is called before the first frame update
     public void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        dontDestroy = false;
     }
 
     void Start()
@@ -51,12 +55,17 @@ public class FireBall_Script : MonoBehaviour
 
         if(other.gameObject.tag == "DestroyFireball")
         {
-            Player_Script.atirando = false;
-            Destroy(gameObject);
+            if (!dontDestroy)
+            {
+                Player_Script.atirando = false;
+                Destroy(gameObject);
+            }
+            
         }
 
         if(other.gameObject.tag == "BreakWall")
         {
+            dontDestroy = true;
             QuebrarParede_Script.breakPower = atkPower;
             QuebrarParede_Script.quebrar = true;
             Camera_script.shakeCamera = true;
@@ -69,15 +78,16 @@ public class FireBall_Script : MonoBehaviour
 
     IEnumerator DestroyBall()
     {
-        yield return new WaitForSeconds(2.5f);
+        yield return new WaitForSeconds(1.5f);
         Player_Script.atirando = false;
+        dontDestroy = false;
         Destroy(gameObject);
     }
 
     //Lança a bola para cima e depois aplai uma forçã horizontal baseado no quanto o jogador carregou de poder
     IEnumerator LaunchBall()
     {
-
+        Player_Script.isInCooldown = true;
         rb.Sleep();
         rb.AddForce(transform.up * force, ForceMode.Impulse);
 

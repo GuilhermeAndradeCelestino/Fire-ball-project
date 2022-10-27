@@ -18,7 +18,11 @@ public class QuebrarParede_Script : MonoBehaviour
     public float explosionRadios;
     public bool teste;
 
-    
+    private void Awake()
+    {
+        quebrar = false;
+
+    }
 
     // Start is called before the first frame update
     void Start()

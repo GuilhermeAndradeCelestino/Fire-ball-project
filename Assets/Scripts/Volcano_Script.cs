@@ -15,6 +15,12 @@ public class Volcano_Script : MonoBehaviour
     [Space]
     public bool spawn;
 
+    private void Awake()
+    {
+        canSpawn = false;
+    }
+
+
     // Start is called before the first frame update
     void Start()
     {

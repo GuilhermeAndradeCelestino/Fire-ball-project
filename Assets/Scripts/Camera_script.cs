@@ -36,8 +36,9 @@ public class Camera_script : MonoBehaviour
 
         if (shakeCamera)
         {
-            shakeCamera = false;
+            
             StartCoroutine(ScreenShake());
+            shakeCamera = false;
         }
     }
 

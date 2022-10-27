@@ -10,7 +10,6 @@ public class Player_Script : MonoBehaviour
     Rigidbody rb;
 
     //ataque
-    public static bool atk;
     public bool usarSpace;
     public static bool atirando;
 
@@ -22,7 +21,12 @@ public class Player_Script : MonoBehaviour
     public float power;
     public GameObject powerUi;
     public Animator powerUiAnim;
-    
+
+    //Barra de poder Cooldown
+    public Image cooldownUi;
+    float cooldownValue;
+    public static bool isInCooldown;
+    bool oneTimeCooldown;
 
     [Space]
     [Space]
@@ -53,6 +57,8 @@ public class Player_Script : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         life = hudsLife.Length - 1;
         posicaoInicial = transform.position;
+        oneTimeCooldown = true;
+        cooldownValue = 1;
     }
 
 
@@ -69,7 +75,7 @@ public class Player_Script : MonoBehaviour
     {
         Pontuacao();
 
-        
+        CooldownAtk();
 
 
         if (usarSpace)
@@ -83,6 +89,9 @@ public class Player_Script : MonoBehaviour
 
         
     }
+
+
+
 
     private void FixedUpdate()
     {
@@ -117,13 +126,48 @@ public class Player_Script : MonoBehaviour
         }
     }
 
+    void CooldownAtk()
+    {
+        //Checa se esta em cooldown aparti da variavel isInCooldown, oneTimeCooldown serve apenas para evitar que o 
+        //o codigo fique sendo executado mias de uma vez
+        if (isInCooldown && oneTimeCooldown)
+        {
+            cooldownValue = 0;
+            StartCoroutine(CooldownValui());
+            oneTimeCooldown = false;
+        }
+
+    }
+
+    IEnumerator CooldownValui()
+    {
+        if (cooldownValue == 0)
+        {
+            //Tempo da animação de tacar a bola
+            yield return new WaitForSeconds(2f);
+        }
+
+        yield return new WaitForSeconds(0.3f);
+        cooldownValue += 0.1f;
+        if (cooldownValue < 1)
+        {
+            StartCoroutine(CooldownValui());
+        }
+        else //if(cooldownValue == 1)
+        {
+            isInCooldown = false;
+            oneTimeCooldown = true;
+        }
+
+    }
 
     void PlayerInput(KeyCode tecla)
     {
         //quando o jogador clikar e segurar = começa a carregar
         //ao soltar o mouse indica para a bola a força de arremeço e que ela pode ser lançada
         //depois disso zera o poder
-        
+        if (!isInCooldown)
+        {
             if (Input.GetKey(tecla))
             {
                 atirando = true;
@@ -142,12 +186,16 @@ public class Player_Script : MonoBehaviour
                 power = 0;
                 usingPowerBar = false;
             }
-        
-        
+
+        }
+
+
+
     }
 
     void Movimentacao()
     {
+        //Movimentação do jogador , aumenta conforme o multiplicador de dificuladade
         //rb.AddForce(new Vector3(0, 0, 1) * speedInicial, ForceMode.Impulse);
         float speedFinal = speedInicial * multiplicador;
         rb.velocity = new Vector3(0, 0, 1) * speedFinal * Time.fixedDeltaTime;
@@ -156,13 +204,14 @@ public class Player_Script : MonoBehaviour
 
     void Pontuacao()
     {
+        //calcula os pontos baseado na distancia
         pontos = Vector3.Distance(posicaoInicial, transform.position);
         Mathf.Abs(pontos);
     }
 
 
 
-    void UpdateUI() 
+    void UpdateUI()
     {
         //atualiza a ui da barra de poder
         if (usingPowerBar)
@@ -170,7 +219,7 @@ public class Player_Script : MonoBehaviour
             powerUiAnim.SetBool("Aparecer", true);
             powerUiAnim.SetTrigger("Comecar");
         }
-        else if(!usingPowerBar)
+        else if (!usingPowerBar)
         {
             powerUiAnim.SetBool("Aparecer", false);
         }
@@ -178,22 +227,23 @@ public class Player_Script : MonoBehaviour
 
 
         //Atualiza a hud da vida
-        if(levouDano == true)
+        if (levouDano == true)
         {
             hudsLife[life].color = new Color(0.2830189f, 0, 0, 1);
             life--;
             levouDano = false;
         }
 
+        //Atualiza a ui da pontuação
+        pontosText.text = Mathf.Round(pontos).ToString();
 
-
-        //Atualiza a pontuação
-        pontosText.text = Mathf.Round(pontos).ToString(); 
-
+        //Atualiza a ui do cooldown
+        cooldownUi.fillAmount = cooldownValue;
     }
 
-    
 
 
-    
+
 }
+
+
