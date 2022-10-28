@@ -17,6 +17,7 @@ public class FireBall_Script : MonoBehaviour
 
     public static bool onAnimation;
 
+
     //tamanho
     bool increaseSize;
     float tamanhoAumentado;
@@ -26,6 +27,8 @@ public class FireBall_Script : MonoBehaviour
     //limitador
     bool oneTimeBreak;
 
+    
+    
 
     // Start is called before the first frame update
     public void Awake()
@@ -58,7 +61,7 @@ public class FireBall_Script : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+      
     }
 
     private void FixedUpdate()
@@ -133,12 +136,15 @@ public class FireBall_Script : MonoBehaviour
         rb.AddForce(transform.up * force, ForceMode.Impulse);
 
         yield return new WaitForSeconds(0.5f);
+        
         print(atkPower);
         rb.Sleep();
+        
         if (atkPower >= 10)
         {
             increaseSize = true;
             rb.AddForce(new Vector3(0, 0, 1) * atkPower * 10, ForceMode.Impulse);
+            
         }
         else
         {

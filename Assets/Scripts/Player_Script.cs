@@ -179,6 +179,7 @@ public class Player_Script : MonoBehaviour
         cooldownValue = 1;
         overCharge = false;
         isInvisible = false;
+        isInCooldown = false;
         idHudAtual = 0;
         StopAllCoroutines();
     }

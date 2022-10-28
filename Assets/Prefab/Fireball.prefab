@@ -129,3 +129,4 @@ MonoBehaviour:
   gravidade: 40
   maxSize: 10
   sizeIncreaseSpeed: 0.1
+  smokeRingParticle: {fileID: 3789952535215903740, guid: 1973dbf1f9a649e43b8f8000db4b9f78, type: 3}
